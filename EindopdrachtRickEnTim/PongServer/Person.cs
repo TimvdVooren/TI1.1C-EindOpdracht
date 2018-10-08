@@ -55,7 +55,7 @@ namespace PongServer
 
         private void setUsername(string username)
         {
-            if(username.Length > 4)
+            if(username.Length > 2)
             {
                 name = username;
                 Console.WriteLine("new Person:" + name);

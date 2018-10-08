@@ -22,9 +22,7 @@ namespace EindopdrachtRickEnTim
         {
             client = new TcpClient();
             client.Connect("192.168.1.139", 1506);
-
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnClientRead), null);
-
         }
 
         private static void OnClientRead(IAsyncResult ar)
@@ -50,11 +48,7 @@ namespace EindopdrachtRickEnTim
                 }                
                 else
                     Console.WriteLine("Unknown packet: " + packet[0]);
-
-
             }
-
-
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnClientRead), null);
         }        
 
@@ -88,7 +82,6 @@ namespace EindopdrachtRickEnTim
         {
             byte[] byteData = Encoding.UTF8.GetBytes(data);
             client.GetStream().Write(byteData, 0, byteData.Length);
-
         }
     }
 }

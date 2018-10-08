@@ -25,9 +25,7 @@ namespace EindopdrachtRickEnTim
             input.ShowDialog();
             sendUsername = false;
             Thread clientThread = new Thread(StartClient);
-            clientThread.Start();
-            
-           
+            clientThread.Start();           
         }
 
         private void StartClient()

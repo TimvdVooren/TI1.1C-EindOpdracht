@@ -42,7 +42,5 @@ namespace PongServer
             foreach (Person u in people.Where(u => u != user))
                 u.Send(data);
         }
-
-
     }
 }
