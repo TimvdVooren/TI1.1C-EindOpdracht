@@ -12,36 +12,34 @@ namespace PongServer
     class PongServer
     {
         static TcpListener server;
-        static List<Player> users = new List<Player>();
-        static int PlayerCount = 0;
+        static List<Person> people = new List<Person>();
 
         public PongServer()
         {
-            server = new TcpListener(1234);
+            server = new TcpListener(IPAddress.Any, 1506);
             server.Start();
-            server.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
+            server.BeginAcceptTcpClient(new AsyncCallback(OnPersonConnect), null);
 
 
             Console.ReadKey();
         }
 
-        private static void OnConnect(IAsyncResult ar)
+        private static void OnPersonConnect(IAsyncResult ar)
         {
-            PlayerCount++;
             TcpClient client = server.EndAcceptTcpClient(ar);
-            users.Add(new Player(client, PlayerCount));
+            people.Add(new Person(client));
 
-            server.BeginAcceptTcpClient(new AsyncCallback(OnConnect), null);
+            server.BeginAcceptTcpClient(new AsyncCallback(OnPersonConnect), null);
         }
 
         public static void Broadcast(string data)
         {
-            foreach (Player user in users)
-                user.Send(data);
+            foreach (Person person in people)
+                person.Send(data);
         }
-        public static void BroadcastExcept(Player user, string data)
+        public static void BroadcastExcept(Person user, string data)
         {
-            foreach (Player u in users.Where(u => u != user))
+            foreach (Person u in people.Where(u => u != user))
                 u.Send(data);
         }
 

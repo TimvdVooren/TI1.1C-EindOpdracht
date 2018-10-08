@@ -8,22 +8,21 @@ using System.Threading.Tasks;
 
 namespace PongServer
 {
-    class Player
+    class Person
     {
         private byte[] buffer = new byte[1024];
         private string totalBuffer = "";
         public TcpClient client { get; set; }
-        public int player { get; set; }
-
-        public Player(TcpClient client, int player)
+        public string name;
+        public Person(TcpClient client)
         {
             this.client = client;
-            this.player = player;
-            client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnRead), this);
+
+            client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnPersonRead), this);
 
         }
 
-        private void OnRead(IAsyncResult ar)
+        private void OnPersonRead(IAsyncResult ar)
         {
             int rc = client.GetStream().EndRead(ar);
             totalBuffer += Encoding.UTF8.GetString(buffer, 0, rc);
@@ -40,30 +39,31 @@ namespace PongServer
                     Console.WriteLine("Protocol error");
                 }
 
-                if (packet[0] == "login")
-                    login(packet[1], packet[2]);
+                if (packet[0] == "username")
+                {
+                    setUsername(packet[1]);
+                }
                 else if (packet[0] == "data")
                     handleData(packet);
                 else
                     Console.WriteLine("Unknown packet: " + packet[0]);
-
-
             }
 
 
-            client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnRead), this);
+            client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnPersonRead), this);
         }
 
-        private void login(string username, string password)
+        private void setUsername(string username)
         {
-            if (username == password)
+            if(username.Length > 4)
             {
-                Send("login\r\nok\r\n\r\n");
-                PongServer.Broadcast("newuser\r\n" + username + "\r\n\r\n");
+                name = username;
+                Console.WriteLine("new Person:" + name);
+                Send("username\r\nOK\r\n\r\n");
             }
             else
             {
-                Send("login\r\nerror\r\n\r\n");
+                Send("username\r\nError\r\n\r\n");
             }
         }
 

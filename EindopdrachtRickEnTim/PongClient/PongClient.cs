@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -15,19 +16,21 @@ namespace PongClient
         private static byte[] buffer = new byte[1024];
         private static string totalBuffer = "";
         static TcpClient client;
+        string clientName;
         public PongClient()
         {
             client = new TcpClient();
-            client.Connect("localhost", 1234);
+            client.Connect("192.168.1.139", 1506);
+            string userName = Console.ReadLine();
+            clientName = userName;
+            send($"username\r\n{userName}\r\n\r\n");
 
-            send("login\r\njohan\r\njohan\r\n\r\n");
-
-            client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnRead), null);
+            client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnClientRead), null);
             Console.ReadKey();
 
         }
 
-        private static void OnRead(IAsyncResult ar)
+        private static void OnClientRead(IAsyncResult ar)
         {
             int rc = client.GetStream().EndRead(ar);
             totalBuffer += Encoding.UTF8.GetString(buffer, 0, rc);
@@ -44,8 +47,10 @@ namespace PongClient
                     Console.WriteLine("Protocol error");
                 }
 
-                if (packet[0] == "login")
-                    login(packet[1]);
+                if (packet[0] == "username")
+                {
+                    setUserName(packet[1]);
+                }                
                 else
                     Console.WriteLine("Unknown packet: " + packet[0]);
 
@@ -53,25 +58,27 @@ namespace PongClient
             }
 
 
-            client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnRead), null);
-        }
+            client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnClientRead), null);
+        }        
 
-
-        private static void login(string status)
+        private static void setUserName(string status)
         {
             if (status == "error")
             {
-                Console.WriteLine("Error logging in, wrong username / password");
+                Console.WriteLine("Error logging in, wrong username");
                 return;
             }
-            Console.WriteLine("Login ok, sending data...");
-            Timer t = new Timer();
-            t.Interval = 1000;
-            t.Elapsed += (sender, args) =>
+            else if (status == "OK")
             {
-                send("data\r\n0\r\n1\r\n4\r\n\r\n");
-            };
-            t.Start();
+                Console.WriteLine("Login ok, sending data...");
+                Timer t = new Timer();
+                t.Interval = 1000;
+                t.Elapsed += (sender, args) =>
+                {
+                    send("data\r\n0\r\n1\r\n4\r\n\r\n");
+                };
+                t.Start();
+            }
         }
 
 
