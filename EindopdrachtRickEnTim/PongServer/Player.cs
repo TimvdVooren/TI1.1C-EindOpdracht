@@ -10,44 +10,68 @@ namespace PongServer
 {
     class Player
     {
-        public TcpClient client { get; set; }
         private byte[] buffer = new byte[1024];
-        private string receive = "";
-        private int player;
-
+        private string totalBuffer = "";
+        public TcpClient client { get; set; }
+        public int player { get; set; }
 
         public Player(TcpClient client, int player)
         {
             this.client = client;
             this.player = player;
-            Send("player," + player);
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnRead), this);
+
         }
 
         private void OnRead(IAsyncResult ar)
         {
             int rc = client.GetStream().EndRead(ar);
-            receive += Encoding.UTF8.GetString(buffer, 0, rc);
-            Console.WriteLine(receive +  " receive");
+            totalBuffer += Encoding.UTF8.GetString(buffer, 0, rc);
 
-            string[] packet = Regex.Split(receive, ",");
-
-            if (packet.Length <= 0)
+            if (totalBuffer.Contains("\r\n\r\n"))
             {
-                Console.WriteLine("error");
+                String request = totalBuffer.Substring(0, totalBuffer.IndexOf("\r\n\r\n"));
+                totalBuffer = totalBuffer.Substring(totalBuffer.IndexOf("\r\n\r\n") + 4);
+
+                string[] packet = Regex.Split(request, "\r\n");
+
+                if (packet.Length <= 0)
+                {
+                    Console.WriteLine("Protocol error");
+                }
+
+                if (packet[0] == "login")
+                    login(packet[1], packet[2]);
+                else if (packet[0] == "data")
+                    handleData(packet);
+                else
+                    Console.WriteLine("Unknown packet: " + packet[0]);
+
+
             }
-            else if (packet[0] == "position")
-            {
-                UpdatePosition(receive);
-            }           
-            else
-                Console.WriteLine("Unknown packet: " + packet[0]);
-            
+
+
+            client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnRead), this);
         }
 
-        private void UpdatePosition(string data)
+        private void login(string username, string password)
         {
-            PongServer.SendToAll(data);
+            if (username == password)
+            {
+                Send("login\r\nok\r\n\r\n");
+                PongServer.Broadcast("newuser\r\n" + username + "\r\n\r\n");
+            }
+            else
+            {
+                Send("login\r\nerror\r\n\r\n");
+            }
+        }
+
+        private void handleData(string[] data)
+        {
+            
+            Console.WriteLine("data received");
+            PongServer.BroadcastExcept(this, String.Join("\r\n", data) + "\r\n\r\n");
         }
 
         public void Send(String data)
