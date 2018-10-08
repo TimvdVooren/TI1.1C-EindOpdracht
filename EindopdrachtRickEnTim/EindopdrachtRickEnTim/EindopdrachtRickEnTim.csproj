@@ -52,6 +52,7 @@
     <Compile Include="AppChat.Designer.cs">
       <DependentUpon>AppChat.cs</DependentUpon>
     </Compile>
+    <Compile Include="ChatClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UsernameInput.cs">
