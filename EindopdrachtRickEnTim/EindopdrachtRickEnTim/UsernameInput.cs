@@ -13,12 +13,10 @@ namespace EindopdrachtRickEnTim
     public partial class UsernameInput : Form
     {
         public string Username { get; set; }
-        private ChatClient chatClient;
 
-        public UsernameInput(ChatClient chatClient)
+        public UsernameInput()
         {
             InitializeComponent();
-            this.chatClient = chatClient;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -26,7 +24,6 @@ namespace EindopdrachtRickEnTim
             if (usernameText.Text != String.Empty && usernameText.Text.Length > 2)
             {
                 Username = usernameText.Text;
-                //chatClient.SendUserName(Username);
                 this.Visible = false;
             }
             else

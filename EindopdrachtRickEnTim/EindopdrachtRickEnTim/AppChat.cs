@@ -15,19 +15,30 @@ namespace EindopdrachtRickEnTim
     {
         private string Username;
         private ChatClient chatClient;
+        private bool sendUsername;
+        private UsernameInput input;
 
         public AppChat()
         {
             InitializeComponent();
-            Thread clientThread = new Thread(StartClient);
-            UsernameInput input = new UsernameInput(chatClient);
+            input = new UsernameInput();
             input.ShowDialog();
-            this.Username = input.Username;
+            sendUsername = false;
+            Thread clientThread = new Thread(StartClient);
+            clientThread.Start();
+            
+           
         }
 
         private void StartClient()
         {
             chatClient = new ChatClient();
+            while(!sendUsername)
+            {
+                sendUsername = !input.Visible; 
+            }
+            this.Username = input.Username;
+            chatClient.SendUserName(Username);
         }
 
         private void button1_Click(object sender, EventArgs e)

@@ -24,7 +24,6 @@ namespace EindopdrachtRickEnTim
             client.Connect("192.168.1.139", 1506);
 
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnClientRead), null);
-            Console.ReadKey();
 
         }
 
