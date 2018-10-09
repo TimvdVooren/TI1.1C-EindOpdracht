@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -37,12 +38,23 @@ namespace EindopdrachtRickEnTim
             }
             this.Username = input.Username;
             chatClient.SendUserName(Username);
+            string lastmessage = "";
+            while(true)
+            {
+                string[] receivedMessage = Regex.Split(chatClient.lastMessage , ","); ;
+                if(lastmessage != receivedMessage[0])
+                {
+                    receiveTextBox.Text += "\r\n" + receivedMessage[1] + ": " + receivedMessage[0];
+                    lastmessage = receivedMessage[0];
+                }
+            }
         }
 
         private void sendButton_Click(object sender, EventArgs e)
         {
             if(sendTextBox.Text != String.Empty)
             {
+                chatClient.SendMessage(sendTextBox.Text);
                 receiveTextBox.Text = receiveTextBox.Text + "\r\n" + Username + ": " + sendTextBox.Text;
             }
             sendTextBox.Text = receiveTextBox.Text;

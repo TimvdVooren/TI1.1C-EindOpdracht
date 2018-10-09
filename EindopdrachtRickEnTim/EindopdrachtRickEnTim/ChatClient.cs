@@ -17,15 +17,17 @@ namespace EindopdrachtRickEnTim
         private static string totalBuffer = "";
         private static TcpClient client;
         private string Username;
+        public string lastMessage { get; set; }
 
         public ChatClient()
         {
             client = new TcpClient();
             client.Connect("localhost", 1506);
+            lastMessage = "";
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnClientRead), null);
         }
 
-        private static void OnClientRead(IAsyncResult ar)
+        private void OnClientRead(IAsyncResult ar)
         {
             int rc = client.GetStream().EndRead(ar);
             totalBuffer += Encoding.UTF8.GetString(buffer, 0, rc);
@@ -42,17 +44,24 @@ namespace EindopdrachtRickEnTim
                     Console.WriteLine("Protocol error");
                 }
 
-                if (packet[0] == "username")
+                switch (packet[0])
                 {
-                    AcceptUserName(packet[1]);
-                }                
-                else
-                    Console.WriteLine("Unknown packet: " + packet[0]);
+                    case "username":
+                        AcceptUserName(packet[1]); break;                   
+
+                    case "message":
+                        HandleMessage(packet[1], packet[2]); break;
+
+                    default:
+                        Console.WriteLine("Unknown packet: " + packet[0]); break;
+                }
+
+
             }
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnClientRead), null);
         }        
 
-        private static void AcceptUserName(string status)
+        private void AcceptUserName(string status)
         {
             if (status == "Error")
             {
@@ -72,6 +81,11 @@ namespace EindopdrachtRickEnTim
             }
         }
 
+        public void HandleMessage(string message, string otherUser)
+        {
+            lastMessage = message + "\r\n" + otherUser;
+        }
+
         public void SendUserName(string Username)
         {
             this.Username = Username;
@@ -81,6 +95,11 @@ namespace EindopdrachtRickEnTim
         public void AddFriend(string FriendName)
         {
             Send($"addfriend\r\n{FriendName}\r\n\r\n");
+        }
+
+        public void SendMessage(string message)
+        {
+            Send($"message\r\n{message}\r\n{Username}\r\n\r\n");
         }
 
         public static void Send(String data)
