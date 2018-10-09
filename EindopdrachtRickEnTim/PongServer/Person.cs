@@ -14,12 +14,15 @@ namespace PongServer
         private string totalBuffer = "";
         public TcpClient client { get; set; }
         public string name;
+        public List<Person> Friends;
+        public SortedList<List<Person>, string> Chats;
+
         public Person(TcpClient client)
         {
             this.client = client;
-
+            Friends = new List<Person>();
+            Chats = new SortedList<List<Person>, string>();
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnPersonRead), this);
-
         }
 
         private void OnPersonRead(IAsyncResult ar)

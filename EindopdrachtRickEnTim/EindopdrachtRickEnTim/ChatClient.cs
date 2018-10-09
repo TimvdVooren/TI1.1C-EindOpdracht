@@ -21,7 +21,7 @@ namespace EindopdrachtRickEnTim
         public ChatClient()
         {
             client = new TcpClient();
-            client.Connect("192.168.1.139", 1506);
+            client.Connect("localhost", 1506);
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnClientRead), null);
         }
 
@@ -76,6 +76,11 @@ namespace EindopdrachtRickEnTim
         {
             this.Username = Username;
             Send($"username\r\n{Username}\r\n\r\n");
+        }
+
+        public void AddFriend(string FriendName)
+        {
+            Send($"addfriend\r\n{FriendName}\r\n\r\n");
         }
 
         public static void Send(String data)

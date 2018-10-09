@@ -19,8 +19,7 @@ namespace PongServer
             server = new TcpListener(IPAddress.Any, 1506);
             server.Start();
             server.BeginAcceptTcpClient(new AsyncCallback(OnPersonConnect), null);
-
-
+            
             Console.ReadKey();
         }
 
@@ -37,6 +36,7 @@ namespace PongServer
             foreach (Person person in people)
                 person.Send(data);
         }
+
         public static void BroadcastExcept(Person user, string data)
         {
             foreach (Person u in people.Where(u => u != user))

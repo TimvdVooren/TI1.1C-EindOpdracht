@@ -39,17 +39,26 @@ namespace EindopdrachtRickEnTim
             chatClient.SendUserName(Username);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void sendButton_Click(object sender, EventArgs e)
         {
             if(sendTextBox.Text != String.Empty)
             {
                 receiveTextBox.Text = receiveTextBox.Text + "\r\n" + Username + ": " + sendTextBox.Text;
             }
-            sendTextBox.Text = "";
+            sendTextBox.Text = receiveTextBox.Text;
         }
 
         private void AppChat_Load(object sender, EventArgs e)
         {
+        }
+
+        private void addFriend_Click(object sender, EventArgs e)
+        {
+            input.UsernameLabel.Text = "Enter your friend's username below:";
+            input.UsernameTextBox.Text = "";
+            input.AddFriend = true;
+            input.Visible = true;
+            chatClient.AddFriend(input.Username);
         }
     }
 }
