@@ -18,6 +18,8 @@ namespace EindopdrachtRickEnTim
         private ChatClient chatClient;
         private bool sendUsername;
         private UsernameInput input;
+        private Thread clientThread;
+        private string displayed;
 
         public AppChat()
         {
@@ -25,13 +27,14 @@ namespace EindopdrachtRickEnTim
             input = new UsernameInput();
             input.ShowDialog();
             sendUsername = false;
-            Thread clientThread = new Thread(StartClient);
-            clientThread.Start();           
+            clientThread = new Thread(StartClient);
+            clientThread.Start();
+            
         }
 
         private void StartClient()
         {
-            chatClient = new ChatClient();
+            chatClient = new ChatClient();            
             while(!sendUsername)
             {
                 sendUsername = !input.Visible; 
@@ -39,16 +42,38 @@ namespace EindopdrachtRickEnTim
             this.Username = input.Username;
             chatClient.SendUserName(Username);
             string lastmessage = "";
-            while(true)
+            while (true)
             {
-                string[] receivedMessage = Regex.Split(chatClient.lastMessage , ","); ;
-                if(lastmessage != receivedMessage[0])
+                if (chatClient != null)
                 {
-                    receiveTextBox.Text += "\r\n" + receivedMessage[1] + ": " + receivedMessage[0];
-                    lastmessage = receivedMessage[0];
+                    string[] receivedMessage = Regex.Split(chatClient.lastMessage, "\r\n"); ;
+                    if (lastmessage != receivedMessage[0])
+                    {
+                        receiveTextBox.Invoke(new Action(() => receiveTextBox.Text += "\r\n" + receivedMessage[1] + ": " + receivedMessage[0]));
+                        displayed = "\r\n" + receivedMessage[1] + ": " + receivedMessage[0];
+                        lastmessage = receivedMessage[0];
+                    }
                 }
             }
+
         }
+
+        //private void displayNewMessage()
+        //{
+        //    string lastmessage = "";            
+        //    if (chatClient != null)
+        //    {
+        //        string[] receivedMessage = Regex.Split(chatClient.lastMessage, "\r\n"); ;
+        //        if (lastmessage != receivedMessage[0])
+        //        {
+        //            receiveTextBox.Text += "\r\n" + receivedMessage[1] + ": " + receivedMessage[0];
+        //            lastmessage = receivedMessage[0];
+        //        }
+        //    }
+            
+        //}
+
+
 
         private void sendButton_Click(object sender, EventArgs e)
         {
