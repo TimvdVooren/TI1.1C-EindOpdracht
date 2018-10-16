@@ -47,7 +47,10 @@ namespace EindopdrachtRickEnTim
                 switch (packet[0])
                 {
                     case "username":
-                        AcceptUserName(packet[1]); break;                   
+                        AcceptUserName(packet[1]); break;
+
+                    case "addfriend":
+                        AcceptFriend(packet[1]); break;
 
                     case "message":
                         HandleMessage(packet[1], packet[2]); break;
@@ -78,6 +81,19 @@ namespace EindopdrachtRickEnTim
                     Send("data\r\n0\r\n1\r\n4\r\n\r\n");
                 };
                 t.Start();
+            }
+        }
+
+        private void AcceptFriend(string status)
+        {
+            if (status == "Error")
+            {
+                Console.WriteLine("Your username is too short");
+                return;
+            }
+            else if (status == "OK")
+            {
+                
             }
         }
 

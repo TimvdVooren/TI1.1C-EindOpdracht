@@ -25,6 +25,13 @@ namespace PongServer
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnPersonRead), this);
         }
 
+        public Person(string name)
+        {
+            this.name = name;
+            Friends = new List<Person>();
+            Chats = new SortedList<List<Person>, string>();
+        }
+
         private void OnPersonRead(IAsyncResult ar)
         {
             int rc = client.GetStream().EndRead(ar);
@@ -44,6 +51,9 @@ namespace PongServer
                 {
                     case "username":
                         setUsername(packet[1]); break;
+
+                    case "addfriend":
+                        addFriend(request); break;
 
                     case "data":
                         handleData(packet); break;
@@ -72,6 +82,26 @@ namespace PongServer
             else
             {
                 Send("username\r\nError\r\n\r\n");
+            }
+        }
+
+        private void addFriend(string friendname)
+        {
+            bool friendAdded = false;
+            foreach (Person friend in PongServer.people) {
+                if (friend.name.Equals(friendname))
+                {
+                    Friends.Add(friend);
+                    Console.WriteLine(this.name + " added " + friendname + " as a friend");
+                    Send("addfriend\r\nOK\r\n\r\n");
+                    friendAdded = true;
+                    break;
+                }
+            }
+            if (!friendAdded)
+            {
+                Console.WriteLine(friendname + " does not exist");
+                Send("addfriend\r\nError\r\n\r\n");
             }
         }
 

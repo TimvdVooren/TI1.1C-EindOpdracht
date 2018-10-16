@@ -11,8 +11,8 @@ namespace PongServer
 {
     class PongServer
     {
-        static TcpListener server;
-        static List<Person> people = new List<Person>();
+        public static TcpListener server;
+        public static List<Person> people = new List<Person>();
 
         public PongServer()
         {

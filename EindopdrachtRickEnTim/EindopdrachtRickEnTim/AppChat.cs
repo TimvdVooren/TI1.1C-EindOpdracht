@@ -16,29 +16,25 @@ namespace EindopdrachtRickEnTim
     {
         private string Username;
         private ChatClient chatClient;
-        private bool sendUsername;
         private UsernameInput input;
         private Thread clientThread;
         private string displayed;
+        private AddFriendInput friendInput;
 
         public AppChat()
         {
             InitializeComponent();
             input = new UsernameInput();
             input.ShowDialog();
-            sendUsername = false;
             clientThread = new Thread(StartClient);
             clientThread.Start();
-            
         }
 
         private void StartClient()
         {
-            chatClient = new ChatClient();            
-            while(!sendUsername)
-            {
-                sendUsername = !input.Visible; 
-            }
+            chatClient = new ChatClient();
+            while(input.Visible){}
+
             this.Username = input.Username;
             chatClient.SendUserName(Username);
             string lastmessage = "";
@@ -91,11 +87,16 @@ namespace EindopdrachtRickEnTim
 
         private void addFriend_Click(object sender, EventArgs e)
         {
-            input.UsernameLabel.Text = "Enter your friend's username below:";
-            input.UsernameTextBox.Text = "";
-            input.AddFriend = true;
-            input.Visible = true;
-            chatClient.AddFriend(input.Username);
+            friendInput = new AddFriendInput();
+            Thread addFriendThread = new Thread(AddFriend);
+            addFriendThread.Start();
+        }
+
+        private void AddFriend()
+        {
+            while (friendInput.Visible) {}
+            chatClient.AddFriend(friendInput.FriendName);
+            friendInput.Dispose();
         }
     }
 }

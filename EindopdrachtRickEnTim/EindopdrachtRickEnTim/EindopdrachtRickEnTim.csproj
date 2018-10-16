@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddFriendInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddFriendInput.Designer.cs">
+      <DependentUpon>AddFriendInput.cs</DependentUpon>
+    </Compile>
     <Compile Include="AppChat.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -61,6 +67,9 @@
     <Compile Include="UsernameInput.Designer.cs">
       <DependentUpon>UsernameInput.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="AddFriendInput.resx">
+      <DependentUpon>AddFriendInput.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AppChat.resx">
       <DependentUpon>AppChat.cs</DependentUpon>
     </EmbeddedResource>

@@ -10,21 +10,22 @@ using System.Windows.Forms;
 
 namespace EindopdrachtRickEnTim
 {
-    public partial class UsernameInput : Form
+    public partial class AddFriendInput : Form
     {
-        public string Username { get; set; }
+        public string FriendName { get; set; }
 
-        public UsernameInput()
+        public AddFriendInput()
         {
+            FriendName = "";
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void submitButton_Click(object sender, EventArgs e)
         {
             if (usernameText.Text != String.Empty && usernameText.Text.Length > 2)
             {
-             Username = usernameText.Text;
-             this.Visible = false;
+                FriendName = usernameText.Text;
+                this.Visible = false;
             }
             else
             {
