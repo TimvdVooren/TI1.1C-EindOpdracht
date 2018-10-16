@@ -10,7 +10,7 @@ namespace PongServer
     {
         static void Main(string[] args)
         {
-            PongServer server = new PongServer();
+            Server server = new Server();
         }
     }
 }

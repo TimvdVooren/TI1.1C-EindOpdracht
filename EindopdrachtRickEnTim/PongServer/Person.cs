@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -14,22 +15,11 @@ namespace PongServer
         private string totalBuffer = "";
         public TcpClient client { get; set; }
         public string name;
-        public List<Person> Friends;
-        public SortedList<List<Person>, string> Chats;
 
         public Person(TcpClient client)
         {
             this.client = client;
-            Friends = new List<Person>();
-            Chats = new SortedList<List<Person>, string>();
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnPersonRead), this);
-        }
-
-        public Person(string name)
-        {
-            this.name = name;
-            Friends = new List<Person>();
-            Chats = new SortedList<List<Person>, string>();
         }
 
         private void OnPersonRead(IAsyncResult ar)
@@ -50,34 +40,38 @@ namespace PongServer
                 switch(packet[0])
                 {
                     case "username":
-                        setUsername(packet[1]); break;
+                        SetUsername(packet[1]); break;
 
-                    case "addfriend":
-                        addFriend(request); break;
+                    //case "addfriend":
+                    //    addFriend(request); break;
+
+                    case "load_chat":
+                        LoadChat(packet[1]); break;
 
                     case "data":
-                        handleData(packet); break;
+                        HandleData(packet); break;
 
                     case "message":
-                        handleMessage(request); break;
+                        HandleMessage(packet[1], packet[2]); break;
 
                     default:
                         Console.WriteLine("Unknown packet: " + packet[0]); break;
                 }               
     
             }
-
-
+            
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnPersonRead), this);
         }
 
-        private void setUsername(string username)
+        private void SetUsername(string username)
         {
-            if(username.Length > 2)
+            if(username.Length > 2 && !Server.usernames.Contains(username))
             {
                 name = username;
                 Console.WriteLine("new Person:" + name);
                 Send("username\r\nOK\r\n\r\n");
+                Server.usernames.Add(name);
+                Server.SendToAll($"people\r\n{JsonConvert.SerializeObject(Server.usernames)}\r\n\r\n");
             }
             else
             {
@@ -85,36 +79,70 @@ namespace PongServer
             }
         }
 
-        private void addFriend(string friendname)
+        //private void addFriend(string friendname)
+        //{
+        //    bool friendAdded = false;
+        //    foreach (Person friend in Server.people) {
+        //        if (friend.name.Equals(friendname))
+        //        {
+        //            Friends.Add(friend);
+        //            Console.WriteLine(this.name + " added " + friendname + " as a friend");
+        //            Send("addfriend\r\nOK\r\n\r\n");
+        //            friendAdded = true;
+        //            break;
+        //        }
+        //    }
+        //    if (!friendAdded)
+        //    {
+        //        Console.WriteLine(friendname + " does not exist");
+        //        Send("addfriend\r\nError\r\n\r\n");
+        //    }
+        //}
+
+        private void LoadChat(string friendName)
         {
-            bool friendAdded = false;
-            foreach (Person friend in PongServer.people) {
-                if (friend.name.Equals(friendname))
-                {
-                    Friends.Add(friend);
-                    Console.WriteLine(this.name + " added " + friendname + " as a friend");
-                    Send("addfriend\r\nOK\r\n\r\n");
-                    friendAdded = true;
-                    break;
-                }
-            }
-            if (!friendAdded)
+            Tuple<string, string> conversation1 = new Tuple<string, string>(name, friendName);
+            Tuple<string, string> conversation2 = new Tuple<string, string>(friendName, name);
+            
+            if (Server.chats.Keys.Contains(conversation1))
             {
-                Console.WriteLine(friendname + " does not exist");
-                Send("addfriend\r\nError\r\n\r\n");
+                Send($"load_chat\r\n{Server.chats[conversation1]}\r\n\r\n");
+            }
+            else if (Server.chats.Keys.Contains(conversation2))
+            {
+                Send($"load_chat\r\n{Server.chats[conversation2]}\r\n\r\n");
+            }
+            else
+            {
+                Server.chats.Add(conversation1, " ");
+                Send($"load_chat\r\nNoChat\r\n\r\n");
             }
         }
 
-        private void handleMessage(string message)
+        private void HandleMessage(string message, string receiver)
         {
-            Console.WriteLine($"message received");
-            PongServer.SendToOthers(this, message + "\r\n\r\n");
+            Console.WriteLine($"message received from {name} to {receiver}");
+            Tuple<string, string> conversation1 = new Tuple<string, string>(name, receiver);
+            Tuple<string, string> conversation2 = new Tuple<string, string>(receiver, name);
+
+            message = name + ": " + message;
+            if (Server.chats.Keys.Contains(conversation1))
+            {
+                string chat = Server.chats[conversation1];
+                Server.chats[conversation1] = Server.chats[conversation1] + "\r\n" + message;
+                chat = Server.chats[conversation1];
+            }
+            else if (Server.chats.Keys.Contains(conversation2))
+            {
+                Server.chats[conversation2] = Server.chats[conversation2] + "\r\n" + message;
+            }
+            //Server.SendToPerson(receiver, $"message\r\n{message}\r\n\r\n");
         }
 
-        private void handleData(string[] data)
+        private void HandleData(string[] data)
         {            
             Console.WriteLine("data received");
-            PongServer.SendToOthers(this, String.Join("\r\n", data) + "\r\n\r\n");
+            Server.SendToOthers(this, String.Join("\r\n", data) + "\r\n\r\n");
         }
 
         public void Send(String data)

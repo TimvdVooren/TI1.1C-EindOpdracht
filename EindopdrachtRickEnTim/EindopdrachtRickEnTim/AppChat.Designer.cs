@@ -47,6 +47,7 @@
             this.friendList.Name = "friendList";
             this.friendList.Size = new System.Drawing.Size(178, 450);
             this.friendList.TabIndex = 0;
+            this.friendList.SelectedIndexChanged += new System.EventHandler(this.friendList_SelectedIndexChanged);
             // 
             // sendTextBox
             // 
@@ -123,7 +124,6 @@
             this.MinimizeBox = false;
             this.Name = "AppChat";
             this.Text = "AppChat";
-            this.Load += new System.EventHandler(this.AppChat_Load);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 

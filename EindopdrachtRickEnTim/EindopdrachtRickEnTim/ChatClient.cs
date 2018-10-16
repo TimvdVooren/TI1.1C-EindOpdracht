@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -18,9 +19,11 @@ namespace EindopdrachtRickEnTim
         private static TcpClient client;
         private string Username;
         public string lastMessage { get; set; }
+        private AppChat appChat;
 
-        public ChatClient()
+        public ChatClient(AppChat appChat)
         {
+            this.appChat = appChat;
             client = new TcpClient();
             client.Connect("localhost", 1506);
             lastMessage = "";
@@ -49,20 +52,25 @@ namespace EindopdrachtRickEnTim
                     case "username":
                         AcceptUserName(packet[1]); break;
 
-                    case "addfriend":
-                        AcceptFriend(packet[1]); break;
+                    case "people":
+                        SetFriendList(packet[1]); break;
+
+                    //case "addfriend":
+                    //    AcceptFriend(packet[1]); break;
+
+                    case "load_chat":
+                        LoadChat(packet[1]); break;
 
                     case "message":
-                        HandleMessage(packet[1], packet[2]); break;
+                        HandleMessage(packet[1]); break;
 
                     default:
                         Console.WriteLine("Unknown packet: " + packet[0]); break;
                 }
-
-
             }
+
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnClientRead), null);
-        }        
+        }
 
         private void AcceptUserName(string status)
         {
@@ -73,33 +81,38 @@ namespace EindopdrachtRickEnTim
             }
             else if (status == "OK")
             {
-                Console.WriteLine("Login ok, sending data...");
-                Timer t = new Timer();
-                t.Interval = 1000;
-                t.Elapsed += (sender, args) =>
-                {
-                    Send("data\r\n0\r\n1\r\n4\r\n\r\n");
-                };
-                t.Start();
+                Console.WriteLine("Login ok");
             }
         }
 
-        private void AcceptFriend(string status)
+        //private void AcceptFriend(string status)
+        //{
+        //    if (status == "Error")
+        //    {
+        //        Console.WriteLine("Your username is too short");
+        //        return;
+        //    }
+        //    else if (status == "OK")
+        //    {
+
+        //    }
+        //}
+
+        private void LoadChat(string chat)
         {
-            if (status == "Error")
-            {
-                Console.WriteLine("Your username is too short");
-                return;
-            }
-            else if (status == "OK")
-            {
-                
-            }
+            if(chat != "NoChat")
+                appChat.SetChat(chat);
+        }
+        
+        private void SetFriendList(string peopleData)
+        {
+            List<string> people = JsonConvert.DeserializeObject<List<string>>(peopleData);
+            appChat.SetFriendList(people);
         }
 
-        public void HandleMessage(string message, string otherUser)
+        public void HandleMessage(string message)
         {
-            lastMessage = message + "\r\n" + otherUser;
+            appChat.AddMessage(message);
         }
 
         public void SendUserName(string Username)
@@ -108,14 +121,19 @@ namespace EindopdrachtRickEnTim
             Send($"username\r\n{Username}\r\n\r\n");
         }
 
-        public void AddFriend(string FriendName)
+        public void GetChat(string friendName)
         {
-            Send($"addfriend\r\n{FriendName}\r\n\r\n");
+            Send($"load_chat\r\n{friendName}\r\n\r\n");
         }
 
-        public void SendMessage(string message)
+        //public void AddFriend(string FriendName)
+        //{
+        //    Send($"addfriend\r\n{FriendName}\r\n\r\n");
+        //}
+
+        public void SendMessage(string message, string receiver)
         {
-            Send($"message\r\n{message}\r\n{Username}\r\n\r\n");
+            Send($"message\r\n{message}\r\n{receiver}\r\n\r\n");
         }
 
         public static void Send(String data)
