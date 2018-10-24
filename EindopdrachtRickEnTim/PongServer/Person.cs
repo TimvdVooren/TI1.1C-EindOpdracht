@@ -42,9 +42,6 @@ namespace PongServer
                     case "username":
                         SetUsername(packet[1]); break;
 
-                    //case "addfriend":
-                    //    addFriend(request); break;
-
                     case "load_chat":
                         LoadChat(packet[1]); break;
 
@@ -78,26 +75,6 @@ namespace PongServer
                 Send("username\r\nError\r\n\r\n");
             }
         }
-
-        //private void addFriend(string friendname)
-        //{
-        //    bool friendAdded = false;
-        //    foreach (Person friend in Server.people) {
-        //        if (friend.name.Equals(friendname))
-        //        {
-        //            Friends.Add(friend);
-        //            Console.WriteLine(this.name + " added " + friendname + " as a friend");
-        //            Send("addfriend\r\nOK\r\n\r\n");
-        //            friendAdded = true;
-        //            break;
-        //        }
-        //    }
-        //    if (!friendAdded)
-        //    {
-        //        Console.WriteLine(friendname + " does not exist");
-        //        Send("addfriend\r\nError\r\n\r\n");
-        //    }
-        //}
 
         private void LoadChat(string friendName)
         {
@@ -136,6 +113,7 @@ namespace PongServer
                 Server.chats[conversation2] = Server.chats[conversation2] + "\r\n" + message;
                 Server.SendToPerson(receiver, $"message\r\n{name}\r\n\r\n");
             }
+            Server.WriteChatsToFile();
         }
 
         private void HandleData(string[] data)

@@ -18,7 +18,6 @@ namespace EindopdrachtRickEnTim
         private ChatClient chatClient;
         private UsernameInput input;
         private Thread clientThread;
-        private string displayed;
         private AddFriendInput friendInput;
         public string currentFriend;
 
@@ -40,7 +39,6 @@ namespace EindopdrachtRickEnTim
 
             this.Username = input.Username;
             chatClient.SendUserName(Username);
-            string lastmessage = "";
             while (true)
             {
 
@@ -90,13 +88,6 @@ namespace EindopdrachtRickEnTim
             //Thread addFriendThread = new Thread(AddFriend);
             //addFriendThread.Start();
         }
-
-        //private void AddFriend()
-        //{
-        //    while (friendInput.Visible) {}
-        //    chatClient.AddFriend(friendInput.FriendName);
-        //    friendInput.Dispose();
-        //}
 
         private void friendList_SelectedIndexChanged(object sender, EventArgs e)
         {

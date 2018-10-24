@@ -18,7 +18,6 @@ namespace EindopdrachtRickEnTim
         private static string totalBuffer = "";
         private static TcpClient client;
         private string Username;
-        public string lastMessage { get; set; }
         private AppChat appChat;
 
         public ChatClient(AppChat appChat)
@@ -26,7 +25,6 @@ namespace EindopdrachtRickEnTim
             this.appChat = appChat;
             client = new TcpClient();
             client.Connect("localhost", 1506);
-            lastMessage = "";
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnClientRead), null);
         }
 
@@ -54,9 +52,6 @@ namespace EindopdrachtRickEnTim
 
                     case "people":
                         SetFriendList(packet[1]); break;
-
-                    //case "addfriend":
-                    //    AcceptFriend(packet[1]); break;
 
                     case "load_chat":
                         LoadChat(packet); break;
