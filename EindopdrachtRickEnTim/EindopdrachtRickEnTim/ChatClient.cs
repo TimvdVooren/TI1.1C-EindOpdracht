@@ -59,7 +59,7 @@ namespace EindopdrachtRickEnTim
                     //    AcceptFriend(packet[1]); break;
 
                     case "load_chat":
-                        LoadChat(packet[1]); break;
+                        LoadChat(packet); break;
 
                     case "message":
                         HandleMessage(packet[1]); break;
@@ -85,22 +85,9 @@ namespace EindopdrachtRickEnTim
             }
         }
 
-        //private void AcceptFriend(string status)
-        //{
-        //    if (status == "Error")
-        //    {
-        //        Console.WriteLine("Your username is too short");
-        //        return;
-        //    }
-        //    else if (status == "OK")
-        //    {
-
-        //    }
-        //}
-
-        private void LoadChat(string chat)
+        private void LoadChat(string[] chat)
         {
-            if(chat != "NoChat")
+            if(chat[1] != "NoChat")
                 appChat.SetChat(chat);
         }
         
@@ -110,9 +97,9 @@ namespace EindopdrachtRickEnTim
             appChat.SetFriendList(people);
         }
 
-        public void HandleMessage(string message)
+        public void HandleMessage(string sender)
         {
-            appChat.AddMessage(message);
+            GetChat(sender);
         }
 
         public void SendUserName(string Username)
@@ -123,13 +110,9 @@ namespace EindopdrachtRickEnTim
 
         public void GetChat(string friendName)
         {
-            Send($"load_chat\r\n{friendName}\r\n\r\n");
+            if(appChat.currentFriend == friendName)
+                Send($"load_chat\r\n{friendName}\r\n\r\n");
         }
-
-        //public void AddFriend(string FriendName)
-        //{
-        //    Send($"addfriend\r\n{FriendName}\r\n\r\n");
-        //}
 
         public void SendMessage(string message, string receiver)
         {

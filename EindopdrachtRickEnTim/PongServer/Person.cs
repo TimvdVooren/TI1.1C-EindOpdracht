@@ -128,15 +128,14 @@ namespace PongServer
             message = name + ": " + message;
             if (Server.chats.Keys.Contains(conversation1))
             {
-                string chat = Server.chats[conversation1];
                 Server.chats[conversation1] = Server.chats[conversation1] + "\r\n" + message;
-                chat = Server.chats[conversation1];
+                Server.SendToPerson(receiver, $"message\r\n{name}\r\n\r\n");
             }
             else if (Server.chats.Keys.Contains(conversation2))
             {
                 Server.chats[conversation2] = Server.chats[conversation2] + "\r\n" + message;
+                Server.SendToPerson(receiver, $"message\r\n{name}\r\n\r\n");
             }
-            //Server.SendToPerson(receiver, $"message\r\n{message}\r\n\r\n");
         }
 
         private void HandleData(string[] data)

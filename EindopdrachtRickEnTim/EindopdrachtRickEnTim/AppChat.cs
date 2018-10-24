@@ -20,7 +20,7 @@ namespace EindopdrachtRickEnTim
         private Thread clientThread;
         private string displayed;
         private AddFriendInput friendInput;
-        private string currentFriend;
+        public string currentFriend;
 
         public AppChat()
         {
@@ -43,42 +43,16 @@ namespace EindopdrachtRickEnTim
             string lastmessage = "";
             while (true)
             {
-                //if (chatClient != null)
-                //{
-                //    string[] receivedMessage = Regex.Split(chatClient.lastMessage, "\r\n"); ;
-                //    if (lastmessage != receivedMessage[0])
-                //    {
-                //        receiveTextBox.Invoke(new Action(() => receiveTextBox.Text += "\r\n" + receivedMessage[1] + ": " + receivedMessage[0]));
-                //        displayed = "\r\n" + receivedMessage[1] + ": " + receivedMessage[0];
-                //        lastmessage = receivedMessage[0];
-                //    }
-                //}
+
             }
-
         }
-
-        //private void displayNewMessage()
-        //{
-        //    string lastmessage = "";            
-        //    if (chatClient != null)
-        //    {
-        //        string[] receivedMessage = Regex.Split(chatClient.lastMessage, "\r\n"); ;
-        //        if (lastmessage != receivedMessage[0])
-        //        {
-        //            receiveTextBox.Text += "\r\n" + receivedMessage[1] + ": " + receivedMessage[0];
-        //            lastmessage = receivedMessage[0];
-        //        }
-        //    }
-            
-        //}
-        
 
         private void sendButton_Click(object sender, EventArgs e)
         {
             if(sendTextBox.Text != String.Empty)
             {
                 chatClient.SendMessage(sendTextBox.Text, (string)friendList.Items[friendList.SelectedIndex]);
-                receiveTextBox.Text = receiveTextBox.Text + "\r\n" + Username + ": " + sendTextBox.Text;
+                receiveTextBox.Text = receiveTextBox.Text + Username + ": " + sendTextBox.Text + "\r\n";
             }
             sendTextBox.Text = "";
         }
@@ -92,13 +66,20 @@ namespace EindopdrachtRickEnTim
         {
             foreach(string person in people)
             {
-                if(person != Username)
+                if(person != Username && !friendList.Items.Contains(person))
                     friendList.Invoke(new Action(() => friendList.Items.Add(person)));
             }
         }
 
-        public void SetChat(string chat)
+        public void SetChat(string[] chatLines)
         {
+            string chat = "";
+            for(int i = 2; i < chatLines.Length; i++)
+            {
+                string message = chatLines[i];
+                if(message != "load_chat" && message != "")
+                    chat = chat + message + "\r\n";
+            }
             receiveTextBox.Invoke(new Action(() => receiveTextBox.Text = chat));
         }
 
@@ -119,7 +100,9 @@ namespace EindopdrachtRickEnTim
 
         private void friendList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            currentFriend = (string) friendList.Items[friendList.SelectedIndex];
+            int index = friendList.SelectedIndex;
+            if(index >= 0)
+                currentFriend = (string) friendList.Items[friendList.SelectedIndex];
             chatClient.GetChat(currentFriend);
             sendTextBox.Enabled = true;
         }
