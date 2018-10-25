@@ -37,6 +37,7 @@
             // 
             this.usernameText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.usernameText.Font = new System.Drawing.Font("Franklin Gothic Medium Cond", 12F);
+            this.usernameText.ForeColor = System.Drawing.Color.Blue;
             this.usernameText.Location = new System.Drawing.Point(63, 33);
             this.usernameText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.usernameText.Name = "usernameText";
