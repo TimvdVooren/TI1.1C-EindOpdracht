@@ -72,7 +72,7 @@ namespace PongServer
             }
             else
             {
-                Send("username\r\nError\r\n\r\n");
+                Send("username\r\nERROR\r\n\r\n");
             }
         }
 

@@ -38,12 +38,14 @@
             // 
             // friendList
             // 
+            this.friendList.BackColor = System.Drawing.Color.LightSeaGreen;
             this.friendList.Dock = System.Windows.Forms.DockStyle.Left;
             this.friendList.Font = new System.Drawing.Font("Franklin Gothic Medium Cond", 15F);
+            this.friendList.ForeColor = System.Drawing.Color.Blue;
             this.friendList.FormattingEnabled = true;
             this.friendList.ItemHeight = 25;
             this.friendList.Location = new System.Drawing.Point(0, 0);
-            this.friendList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.friendList.Margin = new System.Windows.Forms.Padding(2);
             this.friendList.Name = "friendList";
             this.friendList.Size = new System.Drawing.Size(134, 429);
             this.friendList.TabIndex = 0;
@@ -52,25 +54,29 @@
             // sendTextBox
             // 
             this.sendTextBox.Font = new System.Drawing.Font("Franklin Gothic Medium Cond", 12F);
+            this.sendTextBox.ForeColor = System.Drawing.Color.Blue;
             this.sendTextBox.Location = new System.Drawing.Point(2, 2);
-            this.sendTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.sendTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.sendTextBox.Name = "sendTextBox";
             this.sendTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.sendTextBox.Size = new System.Drawing.Size(587, 62);
+            this.sendTextBox.Size = new System.Drawing.Size(577, 62);
             this.sendTextBox.TabIndex = 1;
             this.sendTextBox.Text = "";
             // 
             // button1
             // 
+            this.button1.BackColor = System.Drawing.Color.LightSeaGreen;
             this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Franklin Gothic Medium Cond", 13F);
-            this.button1.Location = new System.Drawing.Point(593, 2);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button1.ForeColor = System.Drawing.Color.Blue;
+            this.button1.Location = new System.Drawing.Point(583, 2);
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(52, 62);
+            this.button1.Size = new System.Drawing.Size(55, 62);
             this.button1.TabIndex = 2;
             this.button1.Text = "Send";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.sendButton_Click);
             // 
             // flowLayoutPanel1
@@ -79,17 +85,19 @@
             this.flowLayoutPanel1.Controls.Add(this.button1);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(134, 366);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(648, 63);
             this.flowLayoutPanel1.TabIndex = 3;
             // 
             // receiveTextBox
             // 
+            this.receiveTextBox.BackColor = System.Drawing.Color.Aquamarine;
             this.receiveTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.receiveTextBox.Font = new System.Drawing.Font("Franklin Gothic Medium Cond", 12F);
+            this.receiveTextBox.ForeColor = System.Drawing.Color.Blue;
             this.receiveTextBox.Location = new System.Drawing.Point(134, 0);
-            this.receiveTextBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.receiveTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.receiveTextBox.Name = "receiveTextBox";
             this.receiveTextBox.ReadOnly = true;
             this.receiveTextBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -107,7 +115,7 @@
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.friendList);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AppChat";

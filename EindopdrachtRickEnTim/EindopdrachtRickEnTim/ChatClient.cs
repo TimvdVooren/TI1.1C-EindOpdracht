@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
-
+using System.Windows.Forms;
 
 namespace EindopdrachtRickEnTim
 {
@@ -18,11 +18,13 @@ namespace EindopdrachtRickEnTim
         private static string totalBuffer = "";
         private static TcpClient client;
         private string Username;
-        private AppChat appChat;
+        public AppChat appChat { get; set; }
+        private UsernameInput usernameInput;
+        public string usernameState;
 
-        public ChatClient(AppChat appChat)
+        public ChatClient(UsernameInput usernameInput)
         {
-            this.appChat = appChat;
+            this.usernameInput = usernameInput;
             client = new TcpClient();
             client.Connect("localhost", 1506);
             client.GetStream().BeginRead(buffer, 0, 1024, new AsyncCallback(OnClientRead), null);
@@ -69,15 +71,7 @@ namespace EindopdrachtRickEnTim
 
         private void AcceptUserName(string status)
         {
-            if (status == "Error")
-            {
-                Console.WriteLine("Your username is too short");
-                return;
-            }
-            else if (status == "OK")
-            {
-                Console.WriteLine("Login ok");
-            }
+            usernameState = status;
         }
 
         private void LoadChat(string[] chat)
